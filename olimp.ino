@@ -18,11 +18,13 @@ const int numbers[10][7] =
   {1, 0, 1, 1, 1, 1, 1} // 9
 };
 
-const int servo_pins[7] = {3, 4, 5, 6, 7, 8, 9};
+const int servo_pins[7] = {2, 3, 4, 5, 6, 7, 8};
+
+const int servo_angles[7] = {90, 90, 90, -90, 90, -90, -90};
 
 Servo servo[7];
 
-bool DEBUG = true;
+const bool DEBUG = true;
 
 void setup() {
 
@@ -31,8 +33,6 @@ void setup() {
   {
     servo[i].attach(servo_pins[i]);
   }
-  showNumber(0);
-  servo[0].write(90);
 }
 
 void loop() {
@@ -46,8 +46,8 @@ void showNumber(int n)
   if(DEBUG) Serial.println("Showed: " + String(n));
   for(int i = 0; i < 7; i++)
   {
-    if(servo[i].read() != 90*numbers[n][i]) 
-      servo[i].write(90 * numbers[n][i]);
+    if(servo[i].read() != servo_angles[i]*numbers[n][i]) 
+      servo[i].write(servo_angles[i] * numbers[n][i]);
   }
 }
 
@@ -84,6 +84,42 @@ void consoleCheck()
         delay(COUNT_DELAY);
       }
       if(DEBUG) Serial.println("Finished count");
+    }
+    else if(string.startsWith("upn"))
+    {
+      string.remove(0, 3);
+      int num = string.toInt();
+      if(num < 0 || num >= sizeof(servo)) 
+        return true;
+      if(DEBUG) Serial.println(String(num) + " up");
+      servo[num].write(servo_angles[num]);
+    }
+    else if(string.startsWith("dnn"))
+    {
+      string.remove(0, 3);
+      int num = string.toInt();
+      if(num < 0 || num >= sizeof(servo)) 
+        return true;
+      if(DEBUG) Serial.println(String(num) + " down");
+      servo[num].write(0);
+    }
+    else if(string.startsWith("up"))
+    {
+      if(DEBUG) Serial.println("All up");
+      for(int i = 0; i < sizeof(servo); i++) 
+      {
+        servo[i].write(servo_angles[i]);
+        delay(100);
+      }
+    }
+    else if(string.startsWith("down"))
+    {
+      if(DEBUG) Serial.println("All down");
+      for(int i = 0; i < sizeof(servo); i++) 
+      {
+        servo[i].write(0);
+        delay(100);
+      }
     }
     else
     {
