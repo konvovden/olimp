@@ -1,5 +1,5 @@
 
-#include <Servo.h>
+#include <Servo.h>  
 
 #define COUNT_DELAY 1500
 
@@ -59,21 +59,19 @@ void consoleCheck()
     if(string.startsWith("pi"))
     {
       if(DEBUG) Serial.println("Started pi");
-      String pi = "14159265359";
-      for(int i = 0; i < sizeof(pi); i++)
+      String pi = "141592653589793238462643383279";
+      for(while Serial.available() == 0)
       {
-        if(Serial.available() > 0)
-        {
-          Serial.readString();
-          if(DEBUG) Serial.println("Stopped pi");
-          break;
-        }
+        if(i >= sizeof(pi)) 
+          i = 0;
         int num = pi[i]-'0';
         showNumber(num);
         delay(COUNT_DELAY);
+        i++;
       }
       showNumber(0);
-      if(DEBUG) Serial.println("Finished pi");
+      Serial.readString();
+      if(DEBUG) Serial.println("Stopped pi");
     }
     else if(string.startsWith("count"))
     {
